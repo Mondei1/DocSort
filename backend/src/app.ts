@@ -3,11 +3,12 @@ import * as express from 'express';
 import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as bp from 'body-parser';
+import * as bodyParser from 'body-parser';
 import { User } from './entity/user';
 import { isNullOrUndefined } from 'util';
 import { makeSalt, createPasswordHash } from './libs/utils';
 import login from './endpoints/login';
+import { insertDummyData } from './dummyData';
 
 export interface TestParameters {
     testName: string,
@@ -27,17 +28,21 @@ const dummyUsers: Array<any> = [
 
 async function run() {
     // Delete storage at startup
-    fs.unlinkSync(path.resolve('./storage'));
+    if (fs.existsSync("./database.db")) {
+        fs.unlinkSync("./database.db");
+    }
 
     // Create connection to SQLite database via TypeORM
-    await createConnection().catch((err) => {
-        console.log("There is an error while connection to SQLite database:", err)
-    });
+    try {
+        await createConnection();
+    } catch (error) {
+        console.log("There is an error while connection to SQLite database:", error)
+    }
 
     // Create Express server
     const app = express();
     const server = http.createServer(app);
-    app.use(bp.json());
+    app.use(bodyParser.json());
 
     // Write dummy users into database
     for(let i = 0; i < dummyUsers.length; i++) {
@@ -45,12 +50,14 @@ async function run() {
         const salt: string = makeSalt(16);
         const hashedPW = await createPasswordHash(dummy.password, salt);
 
-        User.create({
+        await User.create({
             username: dummy.username,
             password: hashedPW,
             salt: salt
         }).save();
     }
+
+    await insertDummyData();
 
     // Register routes
     app.post('/login', login);

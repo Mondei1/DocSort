@@ -1,6 +1,6 @@
 {
     "type": "sqlite",
-    "database": "storage",
+    "database": "database.db",
     "synchronize": true,
     "logging": false,
     "entities": [
