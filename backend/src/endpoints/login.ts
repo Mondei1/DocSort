@@ -4,7 +4,7 @@ import { User } from "../entity/user";
 import { createPasswordHash } from "../libs/utils";
 import * as jwt from 'jsonwebtoken';
 
-export default async function(req: Request, res: Response) {
+export default async function login(req: Request, res: Response) {
     const username = req.body.username;
     const password = req.body.password;
 

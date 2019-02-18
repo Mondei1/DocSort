@@ -9,6 +9,9 @@ import { isNullOrUndefined } from 'util';
 import { makeSalt, createPasswordHash } from './libs/utils';
 import login from './endpoints/login';
 import { insertDummyData } from './dummyData';
+import uploadSingleDocument from './endpoints/uploadSingleDocument';
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
 export interface TestParameters {
     testName: string,
@@ -61,6 +64,7 @@ async function run() {
 
     // Register routes
     app.post('/login', login);
+    app.post('/uploadSingleDocument', upload.single('singleDocument'), uploadSingleDocument);
     
     // Start server
     server.listen(9090, () => {
