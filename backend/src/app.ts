@@ -10,6 +10,7 @@ import { makeSalt, createPasswordHash } from './libs/utils';
 import login from './endpoints/login';
 import { insertDummyData } from './dummyData';
 import uploadSingleDocument from './endpoints/uploadSingleDocument';
+import { Document } from './entity/document';
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -61,6 +62,9 @@ async function run() {
     }
 
     await insertDummyData();
+
+    const sampleDoc: Document = await Document.findOne({where: {primaryNumber: 1}, relations: ['user']});
+    console.log("Dokument:", sampleDoc)
 
     // Register routes
     app.post('/login', login);

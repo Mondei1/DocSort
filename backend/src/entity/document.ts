@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, ManyToOne } from "typeorm";
 import { Tag } from './tag';
+import { User } from "./user";
 
 @Entity('document')
 export class Document extends BaseEntity {
@@ -18,6 +19,9 @@ export class Document extends BaseEntity {
 
     @Column({ nullable: true })
     note?: string;
+
+    @ManyToOne(type => User, user => user.documents)
+    user: User;
 
     @ManyToMany(type => Tag, tag => tag.documents)
     @JoinTable()

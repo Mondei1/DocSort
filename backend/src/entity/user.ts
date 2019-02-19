@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from "typeorm";
+import { Document } from './document';
 
 @Entity('user')
 export class User extends BaseEntity {
@@ -14,6 +15,9 @@ export class User extends BaseEntity {
 
     @Column()
     salt: string;
+
+    @OneToMany(type => Document, document => document.user)
+    documents: Document[];
 
     /*@Column()
     twoFA: boolean;
