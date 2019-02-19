@@ -12,9 +12,23 @@ export function makeSalt(len: number): string {
 
 export function createPasswordHash(password: string, salt: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
+        console.log("Hashing Password, please wait ...");
+        let computedHash: string = "";
+        const hashRounds = 35;
         crypto.scrypt(password, salt, 64, (err, key) => {
             if(err) reject(err);
-            resolve(key.toString('base64'));
+            computedHash = key.toString('base64');
+            for(let x = 0; x < hashRounds; x++) {
+                try {
+                    computedHash = crypto.scryptSync(computedHash, salt, 64).toString('base64');
+                    console.log("Hash", x, ":\t", computedHash);
+                } catch(err) {
+                    reject(err);
+                }
+            }
+            console.log("Fertig:", computedHash);
+            resolve(computedHash);
+            //resolve(key.toString('base64'));
         })
     })
 }
