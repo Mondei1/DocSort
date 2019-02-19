@@ -16,7 +16,6 @@ export async function insertDummyData() {
     } else {
         doc1.primaryNumber = highestDoc.primaryNumber + 1;
     }
-    doc1.uid = "d9d17d90-bdfd-4614-9118-1f7308943cbd";
     doc1.secondaryNumber = 1;
     doc1.user = user;
     doc1.title = "Rechnung TUI Flitterwochen 2019";
@@ -36,7 +35,6 @@ export async function insertDummyData() {
 
     // 2. Document speichern
     let doc2 = new Document();
-    doc2.uid = "0563f459-dd69-4b79-8b1f-fd88a5015afc";
     doc2.primaryNumber = doc1.primaryNumber;
     doc2.secondaryNumber = doc1.secondaryNumber + 1;
     doc2.title = "Mahnung TUI";

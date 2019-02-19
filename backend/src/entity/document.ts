@@ -1,15 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, ManyToOne, PrimaryColumn, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, ManyToOne, CreateDateColumn } from "typeorm";
 import { Tag } from './tag';
 import { User } from "./user";
 
 @Entity('document')
 export class Document extends BaseEntity {
 
-    @PrimaryColumn({
-        type: 'varchar',
-        length: 36
-    })
-    uid: string;
+    @PrimaryGeneratedColumn()
+    uid: number;
 
     @Column()
     primaryNumber: number;
@@ -46,7 +43,7 @@ export class Document extends BaseEntity {
     @CreateDateColumn()
     createdAt: Date;
 
-    @CreateDateColumn({ nullable: true })
-    updatedAt?: Date;
+    @CreateDateColumn()
+    updatedAt: Date;
 
 }

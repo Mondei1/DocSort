@@ -29,21 +29,22 @@ export function makeSalt(len: number): string {
  */
 export function createPasswordHash(password: string, salt: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        console.log("Hashing Password, please wait ...");
+        process.stdout.write("Hashing Password: ");
         let computedHash: string = "";
-        const hashRounds = 35;
+        const hashRounds = 2;
         crypto.scrypt(password, salt, 64, (err, key) => {
             if(err) reject(err);
             computedHash = key.toString('base64');
             for(let x = 0; x < hashRounds; x++) {
                 try {
                     computedHash = crypto.scryptSync(computedHash, salt, 64).toString('base64');
-                    console.log("Hash", x, ":\t", computedHash);
+                    //console.log("Hash", x, ":\t", computedHash);
+                    process.stdout.write(`${x}.`);
                 } catch(err) {
                     reject(err);
                 }
             }
-            console.log("Fertig:", computedHash);
+            console.log("\r\nFertig:", computedHash);
             resolve(computedHash);
             //resolve(key.toString('base64'));
         })
@@ -97,17 +98,10 @@ export function getMimeType(fileName: string): string {
 /**
  * Scans all documents and returns the highest primary number plus one. 
  */
-export function getNewPrimaryNumber(): Promise<number> {
-    return new Promise<number>(async (resolve, reject) => {
-        let numbers: number[] = [];
-        const allDocs = await Document.find();
-        for(let i = 0; i < allDocs.length; i++) {
-            const currentDoc: Document = allDocs[i];
-            numbers.push(currentDoc.primaryNumber);
-        }
-        console.log("All numbers:", numbers);
-        console.log("Max:", Math.max.apply(null, numbers));
-    
-        resolve (Math.max.apply(null, numbers)+1);    
-    })
+export async function getNewPrimaryNumber() {
+    let { primaryNumber } = await Document.findOne({
+        select: ["primaryNumber"],
+        order: { primaryNumber: "DESC" }
+    });
+    return primaryNumber + 1;
 }

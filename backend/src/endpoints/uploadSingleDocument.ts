@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as uuid from 'uuid';
+//import * as uuid from 'uuid';
 import { Request, Response } from "express";
 import { Document } from "../entity/document";
 import { getNewPrimaryNumber, getUserIDFromJWT, getFileExtension } from "../libs/utils";
@@ -18,12 +18,15 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
        - mimetype
        - buffer
        - size
+
+       /45.rechnung_von_malediven_2019.png
     */
-    const docUUID = uuid.v4();
+    //const docUUID = uuid.v4();
     const user = await User.findOne({where: {id: getUserIDFromJWT(req.headers.token.toString())}});
-    const primaryNumber = await getNewPrimaryNumber()
+    const primaryNumber = await getNewPrimaryNumber();
+    let theTags = JSON.parse(req.body.tags);
+    console.log("tags provided:" + JSON.stringify(theTags));
     const document: Document = Document.create({
-        uid: docUUID,
         primaryNumber: primaryNumber,
         title: req.body.title,
         note: req.body.note,
@@ -35,9 +38,10 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
         ocrText: null
     });
 
-    // Example: ROOT/uploads/52233e3f-8a34-4bf1-862c-065e0577ef42_5.2.pdf
-    fs.writeFileSync(`./uploads/${docUUID}_${primaryNumber}.0.${getFileExtension(req.file.originalname)}`, req.file.buffer);
+    // Example: ROOT/uploads/3_2.0.pdf
     await document.save();
+    fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.0_${document.title.replace(" ","_")}.${getFileExtension(req.file.originalname)}`, req.file.buffer);
+    
     console.log("file written");
     res.status(200).send();
 }
