@@ -3,6 +3,7 @@ import { isNullOrUndefined } from "util";
 import { User } from "../entity/user";
 import { createPasswordHash } from "../libs/utils";
 import * as jwt from 'jsonwebtoken';
+import { config } from '../config';
 
 export default async function login(req: Request, res: Response) {
     const username = req.body.username;
@@ -27,7 +28,7 @@ export default async function login(req: Request, res: Response) {
         const jwtBody = {
             userID: user.id
         }
-        const jsonWebToken = jwt.sign(jwtBody, 'someSecretITellYou', {expiresIn: '1d'});
+        const jsonWebToken = jwt.sign(jwtBody, config.secretJWT, {expiresIn: '1d'});
         res.status(200).send({
             jwt: jsonWebToken
         });

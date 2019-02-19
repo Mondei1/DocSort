@@ -1,4 +1,11 @@
 import * as crypto from 'crypto';
+import * as jwt from 'jsonwebtoken';
+import * as mime from 'mime-types';
+import { config } from '../config';
+import { Request, Response } from 'express';
+import { isNullOrUndefined } from 'util';
+import { Document } from '../entity/document';
+import { json } from 'body-parser';
 
 /**
  * This function creates an random string.
@@ -40,5 +47,67 @@ export function createPasswordHash(password: string, salt: string): Promise<stri
             resolve(computedHash);
             //resolve(key.toString('base64'));
         })
+    })
+}
+
+/**
+ * Express Middleware to validate user jwt-keys
+ */
+export function validateJWT(req: Request, res: Response, next: Function): boolean | void {
+    if(isNullOrUndefined(req.headers.token)) {
+        res.status(401).send({error: "Sorry, but you forgot to give me your token."});
+        return false;
+    }
+    try {
+        jwt.verify(req.headers.token.toString(), config.secretJWT);
+        next(); // Token is vaild.
+    } catch(err) {
+        if(err) console.error(err);
+        res.status(401).send({error: "Sorry, but your token you gave me is not vaild."})
+    }
+}
+
+/**
+ * Decodes a JWT token and returns user id.
+ * @param jsonwebtoken JWT of target user to get id from
+ */
+export function getUserIDFromJWT(jsonwebtoken: string): number {
+    const decoded = jwt.decode(jsonwebtoken, {complete: true, json: true});
+    return decoded['userID'];
+}
+
+/**
+ * Returns file extension of any filename.
+ * @param fileName Filename or path of target file.
+ */
+export function getFileExtension(fileName: string): string {
+    return fileName.split(".").pop();
+}
+
+/**
+ * Returns mime type of any file, If not in database it's named "unknown".
+ * @param fileName Filename or path of target file.
+ */
+export function getMimeType(fileName: string): string {
+    const mimeType = mime.lookup(fileName);
+    if(mimeType != "false") return mimeType.toString();
+    else return "unknown";
+}
+
+/**
+ * Scans all documents and returns the highest primary number plus one. 
+ */
+export function getNewPrimaryNumber(): Promise<number> {
+    return new Promise<number>(async (resolve, reject) => {
+        let numbers: number[] = [];
+        const allDocs = await Document.find();
+        for(let i = 0; i < allDocs.length; i++) {
+            const currentDoc: Document = allDocs[i];
+            numbers.push(currentDoc.primaryNumber);
+        }
+        console.log("All numbers:", numbers);
+        console.log("Max:", Math.max.apply(null, numbers));
+    
+        resolve (Math.max.apply(null, numbers)+1);    
     })
 }

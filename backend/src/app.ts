@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import { User } from './entity/user';
 import { isNullOrUndefined } from 'util';
-import { makeSalt, createPasswordHash } from './libs/utils';
+import { makeSalt, createPasswordHash, validateJWT } from './libs/utils';
 import login from './endpoints/login';
 import { insertDummyData } from './dummyData';
 import uploadSingleDocument from './endpoints/uploadSingleDocument';
@@ -63,12 +63,9 @@ async function run() {
 
     await insertDummyData();
 
-    const sampleDoc: Document = await Document.findOne({where: {primaryNumber: 1}, relations: ['user']});
-    console.log("Dokument:", sampleDoc)
-
     // Register routes
     app.post('/login', login);
-    app.post('/uploadSingleDocument', upload.single('singleDocument'), uploadSingleDocument);
+    app.post('/uploadSingleDocument', validateJWT, upload.single('singleDocument'), uploadSingleDocument);
     
     // Start server
     server.listen(9090, () => {

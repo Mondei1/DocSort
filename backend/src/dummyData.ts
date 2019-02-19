@@ -16,6 +16,7 @@ export async function insertDummyData() {
     } else {
         doc1.primaryNumber = highestDoc.primaryNumber + 1;
     }
+    doc1.uid = "d9d17d90-bdfd-4614-9118-1f7308943cbd";
     doc1.secondaryNumber = 1;
     doc1.user = user;
     doc1.title = "Rechnung TUI Flitterwochen 2019";
@@ -27,7 +28,7 @@ export async function insertDummyData() {
     let existingTags = await doc1.tags;
     existingTags.push(tagRechnung, tagReise);
 
-    doc1.fileExtension = "png";
+    doc1.mimeType = "image/png";
     doc1.ocrEnabled = false;
     doc1.createdAt = new Date();
     await doc1.save();
@@ -35,6 +36,7 @@ export async function insertDummyData() {
 
     // 2. Document speichern
     let doc2 = new Document();
+    doc2.uid = "0563f459-dd69-4b79-8b1f-fd88a5015afc";
     doc2.primaryNumber = doc1.primaryNumber;
     doc2.secondaryNumber = doc1.secondaryNumber + 1;
     doc2.title = "Mahnung TUI";
@@ -44,7 +46,7 @@ export async function insertDummyData() {
     let doc2Tags = await doc2.tags;
     doc2Tags.push(await Tag.findOne({name: "Reise"}));
     doc2Tags.push(await Tag.create({name: "Mahnung"}).save());
-    doc2.fileExtension = "png";
+    doc2.mimeType = "image/png";
     doc2.createdAt = new Date();
     await doc2.save();
     console.log("doc2 saved");

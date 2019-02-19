@@ -1,12 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, ManyToOne, PrimaryColumn, CreateDateColumn } from "typeorm";
 import { Tag } from './tag';
 import { User } from "./user";
 
 @Entity('document')
 export class Document extends BaseEntity {
 
-    @PrimaryGeneratedColumn()
-    uid: number;
+    @PrimaryColumn({
+        type: 'varchar',
+        length: 36
+    })
+    uid: string;
 
     @Column()
     primaryNumber: number;
@@ -28,7 +31,7 @@ export class Document extends BaseEntity {
     tags: Promise<Tag[]>;
 
     @Column()
-    fileExtension: string;
+    mimeType: string;
 
     // OCR
      @Column()
@@ -40,10 +43,10 @@ export class Document extends BaseEntity {
     @Column({ nullable: true })
     ocrText?: string;
 
-    @Column()
+    @CreateDateColumn()
     createdAt: Date;
 
-    @Column({ nullable: true })
+    @CreateDateColumn({ nullable: true })
     updatedAt?: Date;
 
 }
