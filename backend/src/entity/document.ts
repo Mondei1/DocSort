@@ -25,7 +25,7 @@ export class Document extends BaseEntity {
 
     @ManyToMany(type => Tag, tag => tag.documents)
     @JoinTable()
-    tags: Promise<Tag[]>;
+    tags: Tag[];
 
     @Column()
     mimeType: string;

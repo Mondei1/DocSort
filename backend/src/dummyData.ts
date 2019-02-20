@@ -23,10 +23,12 @@ export async function insertDummyData() {
 
     let tagRechnung = await Tag.create({name: "Rechnung"}).save();
     let tagReise = await Tag.create({name: "Reise"}).save();
+    let tagMahnung = await Tag.create({name: "Mahnung"}).save();
 
-    let existingTags = await doc1.tags;
-    existingTags.push(tagRechnung, tagReise);
+    let doc1Tags = [];
+    doc1Tags.push(tagRechnung, tagReise);
 
+    doc1.tags = doc1Tags;
     doc1.mimeType = "image/png";
     doc1.ocrEnabled = false;
     doc1.createdAt = new Date();
@@ -41,9 +43,10 @@ export async function insertDummyData() {
     doc2.note = "Mahnung von TUI von den Flitterwochen zu den Malediven (Fushifaru) Ende 2019";
     doc2.ocrEnabled = false;
     doc2.user = user;
-    let doc2Tags = await doc2.tags;
-    doc2Tags.push(await Tag.findOne({name: "Reise"}));
-    doc2Tags.push(await Tag.create({name: "Mahnung"}).save());
+    let doc2Tags = [];
+    doc2Tags.push(tagRechnung);
+    doc2Tags.push(tagMahnung);
+    doc2.tags = doc2Tags;
     doc2.mimeType = "image/png";
     doc2.createdAt = new Date();
     await doc2.save();

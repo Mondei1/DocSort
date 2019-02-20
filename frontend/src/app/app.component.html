@@ -7,4 +7,8 @@
 <span style="background-color: green; width: 300px; height: 200px;" (click)="fileUpload.click()">Select File</span>
 <br><br>
 
-<span (click)="onUpload()">Upload!</span>
+<p>Title: </p><input id="title" (onchange)>
+<p>Note: </p><input id="note" type="text">
+<p>Tags: (seperated with commas): </p><input id="tags" type="text">
+
+<button (click)="onUpload()">Upload!</button>
