@@ -23,7 +23,7 @@ export class AppComponent {
 
   onUpload() {
     this.http.post('http://127.0.0.1:9090/uploadSingleDocument', {
-      singeDocuemnt: this.selectedFile,
+      singleDocuemnt: this.selectedFile,
       title: this.uploadTitle,
       note: this.note,
       tags: this.tags

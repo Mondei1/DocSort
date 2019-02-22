@@ -6,11 +6,14 @@ import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import { User } from './entity/user';
 import { isNullOrUndefined } from 'util';
-import { makeSalt, createPasswordHash, validateJWT } from './libs/utils';
+import { makeRandomString, createPasswordHash, validateJWT } from './libs/utils';
 import login from './endpoints/login';
 import { insertDummyData } from './dummyData';
 import uploadSingleDocument from './endpoints/uploadSingleDocument';
 import { Document } from './entity/document';
+import getDocumentMeta from './endpoints/getDocumentMeta';
+import getDocument from './endpoints/getDocument';
+import { Tag } from './entity/tag';
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -51,7 +54,7 @@ async function run() {
     // Write dummy users into database
     for(let i = 0; i < dummyUsers.length; i++) {
         const dummy = dummyUsers[i];
-        const salt: string = makeSalt(16);
+        const salt: string = makeRandomString(16);
         const hashedPW = await createPasswordHash(dummy.password, salt);
 
         await User.create({
@@ -66,6 +69,10 @@ async function run() {
     // Register routes
     app.post('/login', login);
     app.post('/uploadSingleDocument', validateJWT, upload.single('singleDocument'), uploadSingleDocument);
+    app.get('/getDocumentMeta/:docID', validateJWT, getDocumentMeta);
+    app.get('/getDocument/:docID', validateJWT, getDocument);
+    app.get('/getAllDocuments', validateJWT, async (req, res) => res.status(200).send(await Document.find()));
+    app.get('/getAllTags', validateJWT, async (req, res) => res.status(200).send(await Tag.find()));
     
     // Start server
     server.listen(9090, () => {

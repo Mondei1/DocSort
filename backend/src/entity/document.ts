@@ -30,6 +30,12 @@ export class Document extends BaseEntity {
     @Column()
     mimeType: string;
 
+    @Column({
+        type: 'varchar',
+        length: 16
+    })
+    iv: string;
+
     // OCR
      @Column()
     ocrEnabled: boolean;

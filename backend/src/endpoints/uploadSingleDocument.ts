@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { Request, Response } from "express";
 import { Document } from "../entity/document";
-import { getNewPrimaryNumber, getUserIDFromJWT, getFileExtension } from "../libs/utils";
+import { getNewPrimaryNumber, getUserIDFromJWT, getFileExtension, encryptDocument, makeRandomString as makeRandomString } from "../libs/utils";
 import { User } from "../entity/user";
 import { Tag } from "../entity/tag";
 import { isUndefined, isNullOrUndefined } from "util";
@@ -31,6 +31,7 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
         //const docUUID = uuid.v4();
         const user = await User.findOne({where: {id: getUserIDFromJWT(req.headers.token.toString())}});
         const primaryNumber = await getNewPrimaryNumber();
+        const iv = makeRandomString(16);
     
         // Get tag database references
         let tagRefs: Tag[] = [];
@@ -60,15 +61,18 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
             note: req.body.note,
             user: user,
             tags: tagRefs,
+            iv: iv,
             mimeType: req.file.mimetype,
             ocrEnabled: false,
             ocrFinished: false,
             ocrText: null
         });
     
-        // Example: ROOT/uploads/3_2.0.pdf
+        // Example: ROOT/uploads/3_2.0.dse
         await document.save();
-        fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.0_${document.title.replace(" ","_")}.${getFileExtension(req.file.originalname)}`, req.file.buffer);
+
+        // Encrypt document
+        fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.0.dse`, encryptDocument(req.file.buffer, "123Secret", iv));
         
         console.log("file written");
         res.status(200).send({

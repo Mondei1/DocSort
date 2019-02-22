@@ -5,15 +5,14 @@ import { config } from '../config';
 import { Request, Response } from 'express';
 import { isNullOrUndefined } from 'util';
 import { Document } from '../entity/document';
-import { json } from 'body-parser';
 
 /**
  * This function creates an random string.
  * @param len Length of random string
  */
-export function makeSalt(len: number): string {
+export function makeRandomString(len: number): string {
     var salt = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*'?`´|-_.:,;äöüÖÄÜ!§$%&/\()=?";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     for (var i = 0; i < len; i++)
         salt += possible.charAt(Math.floor(Math.random() * possible.length));
@@ -104,4 +103,19 @@ export async function getNewPrimaryNumber() {
         order: { primaryNumber: "DESC" }
     });
     return primaryNumber + 1;
+}
+
+export function encryptDocument(document: Buffer, password: string, iv: string): Buffer {
+    console.log("iv=", iv);
+    let key = crypto.createHash('sha256').update(password).digest('hex').substr(0, 32);
+    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+    const crypted = Buffer.concat([cipher.update(document), cipher.final()]);
+    return crypted;
+}
+
+export function decryptDocument(document: Buffer, password: string, iv: string): Buffer {
+    let key = crypto.createHash('sha256').update(password).digest('hex').substr(0, 32);
+    const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+    const decrypted = Buffer.concat([decipher.update(document), decipher.final()]);
+    return decrypted;
 }
