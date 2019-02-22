@@ -35,6 +35,7 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
     
         // Get tag database references
         let tagRefs: Tag[] = [];
+        console.log("tags=" + req.body.tags);
         const givenTags: Array<IRequest> = JSON.parse(req.body.tags);
         for(let i = 0; i < givenTags.length; i++) {
             const currentTag: IRequest = givenTags[i];
@@ -46,27 +47,32 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
                 console.log("Create", currentTag.name)
                 const newTag = await Tag.create({
                     name: currentTag.name,
-                    colorBackground: currentTag.bg,
-                    colorForeground: currentTag.fg
-                }).save();
-                tagRefs.push(await Tag.findOne({where: {id: newTag.id}}));
+                    //colorBackground: currentTag.bg,
+                    //colorForeground: currentTag.fg,
+                    colorBackground: "color1",
+                    colorForeground: "color2",
+                    logo: "defaultLogo"
+                });
+                tagRefs.push(newTag);
             }
             tagRefs.push(await Tag.findOne({where: {id: currentTag.value}}));
         }
         console.log(tagRefs);
-    
-        const document: Document = Document.create({
-            primaryNumber: primaryNumber,
-            title: req.body.title,
-            note: req.body.note,
-            user: user,
-            tags: tagRefs,
-            iv: iv,
-            mimeType: req.file.mimetype,
-            ocrEnabled: false,
-            ocrFinished: false,
-            ocrText: null
-        });
+        //console.log("key=" + Object.keys(req.file));
+        const document: Document = new Document();
+        document.primaryNumber = primaryNumber;
+        document.title = req.body.title;
+        document.note = req.body.note;
+        document.user = user;
+        let tags = await document.tags;
+        tags = tagRefs;
+        document.iv = iv;
+        document.mimeType = req.file.mimetype;
+        document.ocrEnabled = false;
+        document.ocrFinished = false;
+        document.ocrText = null;
+        await document.save();
+
     
         // Example: ROOT/uploads/3_2.0.dse
         await document.save();

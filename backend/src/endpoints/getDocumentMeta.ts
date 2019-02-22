@@ -8,6 +8,11 @@ export default async function getDocumentMeta(req: any, res: any) {
         return;
     }
 
-    const doc: Document = await Document.findOne({where: {uid: docID}}, {relations: ['tags']});
+    const doc: Document = await Document.findOne({
+        relations: ['tags'],
+        where: {
+            uid: docID
+        }
+    });
     res.status(200).send(doc);
 }

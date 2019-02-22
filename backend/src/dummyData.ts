@@ -29,7 +29,8 @@ export async function insertDummyData() {
     let doc1Tags = [];
     doc1Tags.push(tagRechnung, tagReise);
 
-    doc1.tags = doc1Tags;
+    let tags1 = await doc1.tags;
+    tags1 = doc1Tags;
     doc1.mimeType = "image/png";
     doc1.ocrEnabled = false;
     doc1.createdAt = new Date();
@@ -48,7 +49,8 @@ export async function insertDummyData() {
     let doc2Tags = [];
     doc2Tags.push(tagRechnung);
     doc2Tags.push(tagMahnung);
-    doc2.tags = doc2Tags;
+    let tags2 = await doc2.tags;
+    tags2 = doc2Tags;
     doc2.mimeType = "image/png";
     doc2.createdAt = new Date();
     await doc2.save();

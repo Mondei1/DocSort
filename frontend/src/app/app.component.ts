@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+//import { HttpClient } from '@angular/common/http';
+import { ApiService } from './api.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,7 @@ export class AppComponent {
   note: string = "";
   tags: string = "";
 
-  constructor(private http: HttpClient) {
+  constructor(private api: ApiService) {
   }
 
   onFileChanged(event) {
@@ -22,8 +23,14 @@ export class AppComponent {
   }
 
   onUpload() {
-    this.http.post('http://127.0.0.1:9090/uploadSingleDocument', {
-      singleDocuemnt: this.selectedFile,
+    this.api.uploadFile({
+      singleDocument: this.selectedFile,
+      title: this.uploadTitle,
+      note: this.note,
+      tags: this.tags
+    });
+    /*this.http.post('http://127.0.0.1:9090/uploadSingleDocument', {
+      singleDocument: this.selectedFile,
       title: this.uploadTitle,
       note: this.note,
       tags: this.tags
@@ -33,6 +40,6 @@ export class AppComponent {
     })
       .subscribe(event => {
         console.log(event); // handle event here
-      });
+      });*/
   }
 }

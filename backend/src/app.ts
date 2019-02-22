@@ -3,6 +3,7 @@ import * as express from 'express';
 import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import { User } from './entity/user';
 import { isNullOrUndefined } from 'util';
@@ -50,6 +51,7 @@ async function run() {
     const app = express();
     const server = http.createServer(app);
     app.use(bodyParser.json());
+    app.use(cors());
 
     // Write dummy users into database
     for(let i = 0; i < dummyUsers.length; i++) {
