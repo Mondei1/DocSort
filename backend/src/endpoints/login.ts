@@ -8,13 +8,11 @@ export default async function login(req: Request, res: Response) {
     const username = req.header("username");
     const password = req.header("password");
 
-    // Check if username and password are given.
     if(username == null || password == null) {
         res.status(400).send();
         return;
     }
 
-    // Get user from db
     const user: User = await User.findOne({
         where: {
             username: username

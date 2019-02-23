@@ -79,11 +79,12 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
         
         await document.save();
 
+        const filePath = generateFilePath(document);
         // Encrypt document
         // CRYPT: fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.0.dse`, encryptDocument(req.file.buffer, "123Secret", iv));
-        fs.writeFileSync(generateFilePath(document), req.file.buffer);
+        fs.writeFileSync(filePath, req.file.buffer);
         
-        console.log("file written");
+        console.log(`file written: ${filePath}`);
         res.status(200).send({
             newID: document.uid
         });

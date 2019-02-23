@@ -56,8 +56,6 @@ export async function insertDummyData() {
     let tags1 = await doc1.tags;
     tags1 = doc1Tags;
     doc1.mimeType = "image/png";
-    doc1.ocrEnabled = false;
-    doc1.createdAt = new Date();
     await doc1.save();
 
     // 2. Document speichern
@@ -67,7 +65,6 @@ export async function insertDummyData() {
     doc2.fileExtension = "png";
     doc2.title = "Mahnung TUI";
     doc2.note = "Mahnung von TUI von den Flitterwochen zu den Malediven (Fushifaru) Ende 2019";
-    doc2.ocrEnabled = false;
     doc2.user = user;
     // CRYPT: doc2.iv = "yUlW6tqGiIG4Ms1K";
     let doc2Tags = [];
@@ -76,6 +73,5 @@ export async function insertDummyData() {
     let tags2 = await doc2.tags;
     tags2 = doc2Tags;
     doc2.mimeType = "image/png";
-    doc2.createdAt = new Date();
     await doc2.save();
 }

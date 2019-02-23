@@ -23,10 +23,4 @@ export class User extends BaseEntity {
     @OneToMany(type => Tag, tag => tag.user)
     tags: Promise<Tag[]>;
 
-    /*@Column()
-    twoFA: boolean;
-
-    @Column()
-    secret?: string;*/
-
 }

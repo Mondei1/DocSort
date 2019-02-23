@@ -1,4 +1,4 @@
-import { UpdateDateColumn,  Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, ManyToOne, CreateDateColumn } from "typeorm";
+import { BeforeInsert, UpdateDateColumn,  Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, ManyToOne, CreateDateColumn } from "typeorm";
 import { Tag } from './tag';
 import { User } from "./user";
 
@@ -54,5 +54,4 @@ export class Document extends BaseEntity {
 
     @UpdateDateColumn()
     updatedAt: Date;
-
 }
