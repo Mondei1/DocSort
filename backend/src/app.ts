@@ -69,7 +69,7 @@ async function run() {
     await insertDummyData();
 
     // Register routes
-    app.post('/login', login);
+    app.get('/login', login);
     app.post('/uploadSingleDocument', validateJWT, upload.single('singleDocument'), uploadSingleDocument);
     app.get('/getDocumentMeta/:docID', validateJWT, getDocumentMeta);
     app.get('/getDocument/:docID', validateJWT, getDocument);
@@ -83,4 +83,12 @@ async function run() {
 }
 
 console.log("DocSort is starting, please stand by ...");
+if (!fs.existsSync("./uploads")) {
+    fs.mkdirSync("./uploads");
+}
+/*let test = new Tag();
+let test2 = 5;
+console.log("tag=" + typeof test);
+console.log("tag=" + typeof test2);
+process.exit(3);*/
 run();

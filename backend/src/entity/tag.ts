@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany } from "typeorm";
+import { ManyToOne, Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany } from "typeorm";
 import { Document } from './document';
+import { User } from './user';
 
 @Entity('tag')
 export class Tag extends BaseEntity {
@@ -21,5 +22,8 @@ export class Tag extends BaseEntity {
 
     @ManyToMany(type => Document, document => document.tags)
     documents: Promise<Document[]>;
+
+    @ManyToOne(type => User, user => user.tags)
+    user: Promise<User>;
 
 }

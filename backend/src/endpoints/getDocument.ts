@@ -10,9 +10,9 @@ export default async function getDocument(req: any, res: any) {
         return;
     }
 
-    const doc: Document = await Document.findOne({where: {uid: docID}, relations: ['tags'], select: ['uid', 'primaryNumber', 'secondaryNumber', 'iv']});
-    const secondaryNumber = doc.secondaryNumber == null ? 0: doc.secondaryNumber;
-    const encryptedDocument = readFileSync(`./uploads/${doc.uid}_${doc.primaryNumber}.${secondaryNumber}.dse`);
-    const finalDoc = decryptDocument(encryptedDocument, "123Secret", doc.iv);
-    res.status(200).send(finalDoc);
+    const doc: Document = await Document.findOne({ where: { uid: docID }, relations: ['tags']});
+    //const secondaryNumber = doc.secondaryNumber == null ? 0: doc.secondaryNumber;
+    //const encryptedDocument = readFileSync(`./uploads/${doc.uid}_${doc.primaryNumber}.${secondaryNumber}.dse`);
+    //const finalDoc = decryptDocument(encryptedDocument, "123Secret", doc.iv);
+    res.status(200).send(doc);
 }

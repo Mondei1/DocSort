@@ -4,14 +4,19 @@ import { Document } from "../entity/document";
 import { getNewPrimaryNumber, getUserIDFromJWT, getFileExtension, encryptDocument, makeRandomString as makeRandomString } from "../libs/utils";
 import { User } from "../entity/user";
 import { Tag } from "../entity/tag";
-import { isUndefined, isNullOrUndefined } from "util";
+// import { isUndefined, isNullOrUndefined } from "util";
 
-interface IRequest {
-    existing: boolean,
-    value?: number,
-    name?: string,
-    fg?: string,
-    bg?: string
+interface IRequestTag {
+    name: string;
+    logo?: string;
+    colorForeground?: string;
+    colorBackground?: string;
+}
+
+interface IRequestBody {
+    title: string;
+    note: string;
+    tags: Array<IRequestTag|number>;
 }
 
 export default async function uploadSingleDocument(req: Request, res: Response) {
@@ -28,57 +33,59 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
            - buffer
            - size
         */
-        //const docUUID = uuid.v4();
-        const user = await User.findOne({where: {id: getUserIDFromJWT(req.headers.token.toString())}});
+        const userId = getUserIDFromJWT(req.headers.token.toString());
+        const user = await User.findOne({ where: { id: userId }});
         const primaryNumber = await getNewPrimaryNumber();
-        const iv = makeRandomString(16);
-    
-        // Get tag database references
-        let tagRefs: Tag[] = [];
-        console.log("tags=" + req.body.tags);
-        const givenTags: Array<IRequest> = JSON.parse(req.body.tags);
-        for(let i = 0; i < givenTags.length; i++) {
-            const currentTag: IRequest = givenTags[i];
-            console.log(currentTag)
+        // CRYPT: const iv = makeRandomString(16);
 
-            // Create tag If 'existing' is false
-            if(!currentTag.existing) {
-                // Just double check If tag exist already. (the user can lie always)
-                console.log("Create", currentTag.name)
-                const newTag = await Tag.create({
-                    name: currentTag.name,
-                    //colorBackground: currentTag.bg,
-                    //colorForeground: currentTag.fg,
-                    colorBackground: "color1",
-                    colorForeground: "color2",
-                    logo: "defaultLogo"
-                });
-                tagRefs.push(newTag);
-            }
-            tagRefs.push(await Tag.findOne({where: {id: currentTag.value}}));
-        }
-        console.log(tagRefs);
-        //console.log("key=" + Object.keys(req.file));
+        const requestBody: IRequestBody = req.body;
+        const file: Express.Multer.File = req.file;
+
         const document: Document = new Document();
         document.primaryNumber = primaryNumber;
-        document.title = req.body.title;
-        document.note = req.body.note;
+
+        // Early saving, so we can access the "id" and the "primaryNumber" is reserved
+        await document.save();
+        document.title = requestBody.title;
+        document.note = requestBody.note;
         document.user = user;
-        let tags = await document.tags;
-        tags = tagRefs;
-        document.iv = iv;
+        // CRYPT: document.iv = iv;
         document.mimeType = req.file.mimetype;
         document.ocrEnabled = false;
         document.ocrFinished = false;
         document.ocrText = null;
+
+        // Setting up TAGs
+        let documentTags = await document.tags;
+        if(requestBody.tags != null) {
+            for (const tag of requestBody.tags) {
+                if(typeof tag == "number") {
+                    let existingTag = await Tag.findOne({ where: { id: tag }});
+                    if(existingTag != null) {
+                        documentTags.push(existingTag);
+                    }
+                } else {
+                    let newTag = new Tag();
+                    newTag.name = tag.name;
+                    newTag.logo = tag.logo;
+                    newTag.colorBackground = tag.colorBackground;
+                    newTag.colorForeground = tag.colorForeground;
+                    let tagUser = await newTag.user;
+                    tagUser = user;
+                    await newTag.save();
+                    documentTags.push(newTag);
+                }
+            }
+        }
+        
         await document.save();
 
-    
         // Example: ROOT/uploads/3_2.0.dse
-        await document.save();
+        //await document.save();
 
         // Encrypt document
-        fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.0.dse`, encryptDocument(req.file.buffer, "123Secret", iv));
+        // CRYPT: fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.0.dse`, encryptDocument(req.file.buffer, "123Secret", iv));
+        fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.${getFileExtension(req.file.originalname)}`, req.file.buffer);
         
         console.log("file written");
         res.status(200).send({
