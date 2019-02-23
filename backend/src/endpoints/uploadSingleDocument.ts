@@ -4,7 +4,6 @@ import { Document } from "../entity/document";
 import { getNewPrimaryNumber, getUserIDFromJWT, getFileExtension, encryptDocument, makeRandomString as makeRandomString } from "../libs/utils";
 import { User } from "../entity/user";
 import { Tag } from "../entity/tag";
-// import { isUndefined, isNullOrUndefined } from "util";
 
 interface IRequestTag {
     name: string;
@@ -43,6 +42,7 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
 
         const document: Document = new Document();
         document.primaryNumber = primaryNumber;
+        document.secondaryNumber = 0;
 
         // Early saving, so we can access the "id" and the "primaryNumber" is reserved
         await document.save();

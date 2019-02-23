@@ -1,9 +1,8 @@
-import { isNullOrUndefined } from "util";
 import { Document } from "../entity/document";
 
 export default async function getDocumentMeta(req: any, res: any) {
     const docID: number = req.params.docID;
-    if(isNullOrUndefined(docID)) {
+    if(docID == null) {
         res.status(400).send();
         return;
     }

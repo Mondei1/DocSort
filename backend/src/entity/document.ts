@@ -46,10 +46,10 @@ export class Document extends BaseEntity {
     @Column({ nullable: true })
     ocrText?: string;
 
-    /*@CreateDateColumn()
+    @CreateDateColumn()
     createdAt: Date;
 
-    @CreateDateColumn()
+    /*@CreateDateColumn()
     updatedAt: Date;*/
 
 }

@@ -3,7 +3,6 @@ import * as jwt from 'jsonwebtoken';
 import * as mime from 'mime-types';
 import { config } from '../config';
 import { Request, Response } from 'express';
-import { isNullOrUndefined } from 'util';
 import { Document } from '../entity/document';
 
 /**
@@ -28,7 +27,7 @@ export function makeRandomString(len: number): string {
  */
 export function createPasswordHash(password: string, salt: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        process.stdout.write("Hashing Password: ");
+        //process.stdout.write("Hashing Password: ");
         let computedHash: string = "";
         const hashRounds = 2;
         crypto.scrypt(password, salt, 64, (err, key) => {
@@ -43,7 +42,7 @@ export function createPasswordHash(password: string, salt: string): Promise<stri
                     reject(err);
                 }
             }
-            console.log("\r\nFertig:", computedHash);
+            //console.log("\r\nFertig:", computedHash);
             resolve(computedHash);
             //resolve(key.toString('base64'));
         })
@@ -54,7 +53,7 @@ export function createPasswordHash(password: string, salt: string): Promise<stri
  * Express Middleware to validate user jwt-keys
  */
 export function validateJWT(req: Request, res: Response, next: Function): boolean | void {
-    if(isNullOrUndefined(req.headers.token)) {
+    if(req.headers.token == null) {
         res.status(401).send({error: "Sorry, but you forgot to give me your token."});
         return false;
     }

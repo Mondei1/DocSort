@@ -1,11 +1,33 @@
 import { Document } from "./entity/document";
 import { Tag } from "./entity/tag";
 import { User } from "./entity/user";
+import { makeRandomString, createPasswordHash } from "./libs/utils";
 
 
 export async function insertDummyData() {
+    const dummyUsers: Array<any> = [
+        {
+            username: "Mondei1",
+            password: "pass"
+        },
+        {
+            username: "spYro",
+            password: "PASS"
+        }
+    ]
+    // Write dummy users into database
+    for(let dummyUser of dummyUsers) {
+        const salt: string = makeRandomString(16);
+        const hashedPW: string = await createPasswordHash(dummyUser.password, salt);
+
+        await User.create({
+            username: dummyUser.username,
+            password: hashedPW,
+            salt: salt
+        }).save();
+    }
     const user: User = await User.findOne({where: {username: "Mondei1"}});
-    // 1. Document speichern
+    // 1. save document
     let highestDoc = await Document.findOne({
         select: ["primaryNumber"],
         order: { primaryNumber: "DESC" }
@@ -33,9 +55,8 @@ export async function insertDummyData() {
     tags1 = doc1Tags;
     doc1.mimeType = "image/png";
     doc1.ocrEnabled = false;
-    // doc1.createdAt = new Date();
+    doc1.createdAt = new Date();
     await doc1.save();
-    console.log("doc1 saved");
 
     // 2. Document speichern
     let doc2 = new Document();
@@ -52,8 +73,6 @@ export async function insertDummyData() {
     let tags2 = await doc2.tags;
     tags2 = doc2Tags;
     doc2.mimeType = "image/png";
-    // doc2.createdAt = new Date();
+    doc2.createdAt = new Date();
     await doc2.save();
-    console.log("doc2 saved");
-
 }

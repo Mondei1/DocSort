@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-// import { isNullOrUndefined } from "util";
 import { User } from "../entity/user";
 import { createPasswordHash } from "../libs/utils";
 import * as jwt from 'jsonwebtoken';
