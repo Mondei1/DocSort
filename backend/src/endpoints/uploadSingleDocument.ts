@@ -29,14 +29,7 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
         if (!fs.existsSync("./uploads")) {
             fs.mkdirSync("./uploads");
         }
-        /*Attribute von req.file:
-           - fieldname
-           - originalname
-           - encoding
-           - mimetype
-           - buffer
-           - size
-        */
+
         const userId = getUserIDFromJWT(req.headers.token.toString());
         const user = await User.findOne({ where: { id: userId }});
         const nextPrimaryNumber = await getNewPrimaryNumber();
@@ -85,7 +78,7 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
         }
         
         await document.save();
-        
+
         // Encrypt document
         // CRYPT: fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.0.dse`, encryptDocument(req.file.buffer, "123Secret", iv));
         fs.writeFileSync(generateFilePath(document), req.file.buffer);

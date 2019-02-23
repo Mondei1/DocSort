@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, ManyToOne, CreateDateColumn } from "typeorm";
+import { UpdateDateColumn,  Entity, PrimaryGeneratedColumn, Column, BaseEntity, ManyToMany, JoinTable, ManyToOne, CreateDateColumn } from "typeorm";
 import { Tag } from './tag';
 import { User } from "./user";
 
@@ -40,10 +40,10 @@ export class Document extends BaseEntity {
     iv: string;*/
 
     // OCR
-     @Column({ nullable: true })
+     @Column({ nullable: true, default: false })
     ocrEnabled?: boolean;
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, default: false })
     ocrFinished?: boolean;
 
     @Column({ nullable: true })
@@ -52,7 +52,7 @@ export class Document extends BaseEntity {
     @CreateDateColumn()
     createdAt: Date;
 
-    /*@CreateDateColumn()
-    updatedAt: Date;*/
+    @UpdateDateColumn()
+    updatedAt: Date;
 
 }
