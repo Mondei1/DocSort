@@ -8,6 +8,7 @@ import { getUserIDFromJWT } from "../libs/getUserIDFromJWT";
 import { extractFileExtension } from "../libs/extractFileExtension";
 import { encryptDocument } from "../libs/encryptDocument";
 import { createRandomString } from "../libs/createRandomString";
+import { generateFilePath } from "../libs/generateFilePath";
 
 interface IRequestTag {
     name: string;
@@ -38,14 +39,14 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
         */
         const userId = getUserIDFromJWT(req.headers.token.toString());
         const user = await User.findOne({ where: { id: userId }});
-        const primaryNumber = await getNewPrimaryNumber();
+        const nextPrimaryNumber = await getNewPrimaryNumber();
         // CRYPT: const iv = makeRandomString(16);
 
         const requestBody: IRequestBody = req.body;
         const file: Express.Multer.File = req.file;
 
         const document: Document = new Document();
-        document.primaryNumber = primaryNumber;
+        document.primaryNumber = nextPrimaryNumber;
         document.secondaryNumber = 0;
 
         // Early saving, so we can access the "id" and the "primaryNumber" is reserved
@@ -58,6 +59,7 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
         document.ocrEnabled = false;
         document.ocrFinished = false;
         document.ocrText = null;
+        document.fileExtension = extractFileExtension(req.file.originalname);
 
         // Setting up TAGs
         let documentTags = await document.tags;
@@ -83,13 +85,10 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
         }
         
         await document.save();
-
-        // Example: ROOT/uploads/3_2.0.dse
-        //await document.save();
-
+        
         // Encrypt document
         // CRYPT: fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.0.dse`, encryptDocument(req.file.buffer, "123Secret", iv));
-        fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.${extractFileExtension(req.file.originalname)}`, req.file.buffer);
+        fs.writeFileSync(generateFilePath(document), req.file.buffer);
         
         console.log("file written");
         res.status(200).send({

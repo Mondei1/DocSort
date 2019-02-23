@@ -14,6 +14,9 @@ export class Document extends BaseEntity {
     @Column({ nullable: true })
     secondaryNumber?: number;
 
+    @Column()
+    fileExtension: string;
+
     @Column({ nullable: true })
     title?: string;
 
