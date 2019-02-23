@@ -1,0 +1,9 @@
+#login {
+    display: inline-block;
+    align-content: center;
+    margin: 0 auto;
+    border: 1px solid red;
+}
+input {
+    margin-bottom: 15px;
+}

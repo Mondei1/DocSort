@@ -1,0 +1,14 @@
+<h1>main-frame</h1>
+
+<!--<router-outlet></router-outlet>-->
+{{uploadTitle}}
+<input type="file" id="singleDocument" class="fileUpload" #fileUpload (change)="onFileChanged($event)">
+
+<span style="background-color: green; width: 300px; height: 200px;" (click)="fileUpload.click()">Select File</span>
+<br><br>
+
+<p>Title: </p><input id="title" type="text" [(ngModel)]="uploadTitle">
+<p>Note: </p><input id="note" type="text" [(ngModel)]="note">
+<p>Tags: (seperated with commas): </p><input id="tags" type="text" [(ngModel)]="tags">
+
+<button (click)="onUpload()">Upload!</button>
