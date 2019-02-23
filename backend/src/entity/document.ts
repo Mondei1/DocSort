@@ -14,8 +14,8 @@ export class Document extends BaseEntity {
     @Column({ nullable: true })
     secondaryNumber?: number;
 
-    @Column()
-    title: string;
+    @Column({ nullable: true })
+    title?: string;
 
     @Column({ nullable: true })
     note?: string;
@@ -27,18 +27,18 @@ export class Document extends BaseEntity {
     @JoinTable()
     tags: Promise<Tag[]>;
 
-    @Column()
-    mimeType: string;
+    @Column({ nullable: true })
+    mimeType?: string;
 
-    @Column({
+    /* CRYPT: @Column({
         type: 'varchar',
         length: 16
     })
-    iv: string;
+    iv: string;*/
 
     // OCR
-     @Column()
-    ocrEnabled: boolean;
+     @Column({ nullable: true })
+    ocrEnabled?: boolean;
 
     @Column({ nullable: true })
     ocrFinished?: boolean;
@@ -46,10 +46,10 @@ export class Document extends BaseEntity {
     @Column({ nullable: true })
     ocrText?: string;
 
-    @CreateDateColumn()
+    /*@CreateDateColumn()
     createdAt: Date;
 
     @CreateDateColumn()
-    updatedAt: Date;
+    updatedAt: Date;*/
 
 }

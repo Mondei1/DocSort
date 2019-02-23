@@ -20,7 +20,7 @@ export async function insertDummyData() {
     doc1.user = user;
     doc1.title = "Rechnung TUI Flitterwochen 2019";
     doc1.note = "Rechnung von den Flitterwochen zu den Malediven (Fushifaru) Ende 2019";
-    doc1.iv = "0A2wp3fgzhWquOlz";
+    // CRYPT: doc1.iv = "0A2wp3fgzhWquOlz";
 
     let tagRechnung = await Tag.create({name: "Rechnung"}).save();
     let tagReise = await Tag.create({name: "Reise"}).save();
@@ -33,7 +33,7 @@ export async function insertDummyData() {
     tags1 = doc1Tags;
     doc1.mimeType = "image/png";
     doc1.ocrEnabled = false;
-    doc1.createdAt = new Date();
+    // doc1.createdAt = new Date();
     await doc1.save();
     console.log("doc1 saved");
 
@@ -45,14 +45,14 @@ export async function insertDummyData() {
     doc2.note = "Mahnung von TUI von den Flitterwochen zu den Malediven (Fushifaru) Ende 2019";
     doc2.ocrEnabled = false;
     doc2.user = user;
-    doc2.iv = "yUlW6tqGiIG4Ms1K";
+    // CRYPT: doc2.iv = "yUlW6tqGiIG4Ms1K";
     let doc2Tags = [];
     doc2Tags.push(tagRechnung);
     doc2Tags.push(tagMahnung);
     let tags2 = await doc2.tags;
     tags2 = doc2Tags;
     doc2.mimeType = "image/png";
-    doc2.createdAt = new Date();
+    // doc2.createdAt = new Date();
     await doc2.save();
     console.log("doc2 saved");
 

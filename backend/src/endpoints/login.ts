@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
-import { isNullOrUndefined } from "util";
+// import { isNullOrUndefined } from "util";
 import { User } from "../entity/user";
 import { createPasswordHash } from "../libs/utils";
 import * as jwt from 'jsonwebtoken';
 import { config } from '../config';
 
 export default async function login(req: Request, res: Response) {
-    const username = req.body.username;
-    const password = req.body.password;
+    const username = req.header("username");
+    const password = req.header("password");
 
     // Check if username and password are given.
-    if(isNullOrUndefined(username) && isNullOrUndefined(password)) {
+    if(username == null || password == null) {
         res.status(400).send();
+        return;
     }
 
     // Get user from db
@@ -22,17 +23,16 @@ export default async function login(req: Request, res: Response) {
     })
     const hashedPassword = await createPasswordHash(password, user.salt);
     if(user.password == hashedPassword) {
-        // Password given from user is correct
         console.log(`User ${username} is now logged in.`);
 
         const jwtBody = {
             userID: user.id
         }
-        const jsonWebToken = jwt.sign(jwtBody, config.secretJWT, {expiresIn: '1d'});
+        const jsonWebToken = jwt.sign(jwtBody, config.secretJWT, {expiresIn: '7d'});
         res.status(200).send({
             jwt: jsonWebToken
         });
-    } else {
-        res.status(401).send();
+        return;
     }
+    res.status(401).send();
 }
