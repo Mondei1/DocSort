@@ -1,16 +1,8 @@
 import { createConnection } from 'typeorm';
 import * as fs from 'fs';
-import { validateJWT } from './libs/utils';
-import login from './endpoints/login';
 import { insertDummyData } from './dummyData';
-import uploadSingleDocument from './endpoints/uploadSingleDocument';
-import { Document } from './entity/document';
-import getDocumentMeta from './endpoints/getDocumentMeta';
-import getDocument from './endpoints/getDocument';
-import { Tag } from './entity/tag';
 import { registerExpressRoutes } from './libs/registerExpressRoutes';
 import { createExpressServer } from './libs/createExpressServer';
-
 
 async function run() {
     console.log("DocSort is starting, please stand by ...");

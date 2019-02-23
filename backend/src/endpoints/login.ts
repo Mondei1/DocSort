@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { User } from "../entity/user";
-import { createPasswordHash } from "../libs/utils";
 import * as jwt from 'jsonwebtoken';
 import { config } from '../config';
+import { createPasswordHash } from "../libs/createPasswordHash";
 
 export default async function login(req: Request, res: Response) {
     const username = req.header("username");

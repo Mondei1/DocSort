@@ -1,7 +1,8 @@
 import { Document } from "./entity/document";
 import { Tag } from "./entity/tag";
 import { User } from "./entity/user";
-import { makeRandomString, createPasswordHash } from "./libs/utils";
+import { createRandomString } from "./libs/createRandomString";
+import { createPasswordHash } from "./libs/createPasswordHash";
 
 
 export async function insertDummyData() {
@@ -17,7 +18,7 @@ export async function insertDummyData() {
     ]
     // Write dummy users into database
     for(let dummyUser of dummyUsers) {
-        const salt: string = makeRandomString(16);
+        const salt: string = createRandomString(16);
         const hashedPW: string = await createPasswordHash(dummyUser.password, salt);
 
         await User.create({

@@ -1,9 +1,13 @@
 import * as fs from "fs";
 import { Request, Response } from "express";
 import { Document } from "../entity/document";
-import { getNewPrimaryNumber, getUserIDFromJWT, getFileExtension, encryptDocument, makeRandomString as makeRandomString } from "../libs/utils";
 import { User } from "../entity/user";
 import { Tag } from "../entity/tag";
+import { getNewPrimaryNumber } from "../libs/getNewPrimaryNumber";
+import { getUserIDFromJWT } from "../libs/getUserIDFromJWT";
+import { extractFileExtension } from "../libs/extractFileExtension";
+import { encryptDocument } from "../libs/encryptDocument";
+import { createRandomString } from "../libs/createRandomString";
 
 interface IRequestTag {
     name: string;
@@ -85,7 +89,7 @@ export default async function uploadSingleDocument(req: Request, res: Response) 
 
         // Encrypt document
         // CRYPT: fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.0.dse`, encryptDocument(req.file.buffer, "123Secret", iv));
-        fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.${getFileExtension(req.file.originalname)}`, req.file.buffer);
+        fs.writeFileSync(`./uploads/${document.uid}_${primaryNumber}.${extractFileExtension(req.file.originalname)}`, req.file.buffer);
         
         console.log("file written");
         res.status(200).send({
