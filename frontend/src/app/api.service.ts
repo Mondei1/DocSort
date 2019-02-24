@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +14,11 @@ export class ApiService {
   }
 
   async login(username, password) {
-    const response = await this.http.post(`${this.serverString}/login`, {
-      username: username,
-      password: password
-    });
+    const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    const params = new HttpParams()
+      .set('username', username)
+      .set('password', password);
+    const response = await this.http.get(`${this.serverString}/login`, { headers: headers, params: params });
     this.jwt = this.jwt;
     this.isLoggedIn = true;
   }

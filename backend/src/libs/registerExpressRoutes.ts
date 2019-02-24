@@ -1,10 +1,10 @@
 import login from "../endpoints/login";
-import { validateJWT } from "./utils";
 import uploadSingleDocument from "../endpoints/uploadSingleDocument";
 import getDocumentMeta from "../endpoints/getDocumentMeta";
 import getDocument from "../endpoints/getDocument";
 import { Tag } from "../entity/tag";
 import { Document } from '../entity/document';
+import { validateJWT } from "./validateJwt";
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 
